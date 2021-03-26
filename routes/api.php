@@ -21,9 +21,27 @@ use Illuminate\Support\Facades\Route;
 Route::post('auth/login', 'Api\\AuthController@login');
 
 Route::group(['middleware' => ['apiJwt']], function (){
-    Route::post('auth/logout', 'Api\\AuthController@logout');
 
-    Route::get('users', 'Api\\UserController@index');
+
+
+
+Route::post('auth/logout', 'Api\\AuthController@logout');
+
+Route::get('teachers', 'Api\\TeacherController@index');
+
+Route::get('discipline/{code?}', 'Api\\DisciplineController@index');
+Route::post('new/discipline', 'Api\\DisciplineController@store');
+Route::put('edit/discipline/{code}', 'Api\\DisciplineController@update');
+Route::delete('delete/discipline/{code}', 'Api\\DisciplineController@destroy');
+
+Route::get('classe/{code?}', 'Api\\ClasseController@index');
+Route::post('new/classe', 'Api\\ClasseController@store');
+Route::put('edit/classe/{id}', 'Api\\ClasseController@update');
+Route::delete('delete/classe/{id}', 'Api\\ClasseController@destroy');
+
+
+
+
 });
 
 
