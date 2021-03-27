@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Model\Classes;
 use App\Model\Disciplines;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ClasseController extends Controller
 {
@@ -14,16 +15,26 @@ class ClasseController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($code = null)
+    public function index($id = null)
     {
-        if ($code === null){
+        if ($id === null) {
+            $classes = Classes::with('discipline')->get();
 
-            $disciplines = Classes::all();
-            return response()->json($disciplines);
+            foreach ($classes as $classe) {
+                $dataClasse[] = [
+                    'Id_Discipline' => $classe->discipline->id,
+                    'Code' => $classe->discipline->code,
+                    'Discipline' => $classe->discipline->name,
+                    'Id_Classe' => $classe->id,
+                    'Classe' => $classe->name
+                ];
+            }
+
+            return response()->json($dataClasse);
         }
 
 
-        $found = Classes::where('code', $code)->first();
+        $found = Classes::with('discipline')->where('id', $id)->first();
         if ($found === null) {
             return response()->json([
                 "message" => "Discipline not found"
@@ -42,9 +53,15 @@ class ClasseController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request['discipline_id'] == null || $request['name'] == null) {
+
+        $validator = Validator::make($request->all(), [
+            'discipline_id' => 'required',
+            'name' => 'required|unique:classes',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
-                "message" => "Error - Field C cannot be null"
+                "message" => "Error - " . $validator->getMessageBag()
             ], 400);
         }
 
@@ -56,15 +73,14 @@ class ClasseController extends Controller
             ], 404);
         }
 
-        $classe = new Classes;
-        $classe->discipline()->associate($discipline);
-        $classe->name = $request['name'];
-
         try {
+            $classe = new Classes;
+            $classe->discipline_id = $request['discipline_id'];
+            $classe->name = $request['name'];
             $classe->save();
-        } catch (\ExceptiDn $e) {
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "Error - Classe not created: ".$e->getMessage()
+                "message" => "Error - Classe not created: " . $e->getMessage()
             ], 400);
 
         }
@@ -85,6 +101,16 @@ class ClasseController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'discipline_id' => 'required',
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "message" => "Error - " . $validator->getMessageBag()
+            ], 400);
+        }
 
         $found = Classes::find($id);
 
@@ -100,13 +126,21 @@ class ClasseController extends Controller
             ], 400);
         }
 
-        $found->name = request('name');
+        $discipline = Disciplines::find($request['discipline_id']);
+
+        if ($discipline === null) {
+            return response()->json([
+                "message" => "Discipline not found. Enter a valid discipline"
+            ], 404);
+        }
 
         try {
+            $found->name = $request['discipline_id'];
+            $found->name = $request['name'];
             $found->save();
         } catch (\Exception $e) {
             return response()->json([
-                "message" => "Error - Classe d'ont updated: ".$e->getMessage()
+                "message" => "Error - Classe d'ont updated: " . $e->getMessage()
             ], 400);
         }
 
@@ -136,9 +170,9 @@ class ClasseController extends Controller
 
         try {
             $destroy = Classes::destroy($found->id);
-        } catch (\Exception $ex){
+        } catch (\Exception $ex) {
             return response()->json([
-                "message" => "Error - ".$ex->getMessage()
+                "message" => "Error - " . $ex->getMessage()
             ], 400);
         }
 

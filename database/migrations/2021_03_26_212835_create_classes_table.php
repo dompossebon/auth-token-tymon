@@ -17,7 +17,7 @@ class CreateClassesTable extends Migration
             $table->id();
 
 
-            $table->bigInteger('discipline_id')->unsigned();
+            $table->bigInteger('discipline_id')->unsigned(); // foreign key
             $table->string('name', 100)->unique(); // Auto Explicativo
 
             $table->timestamps();

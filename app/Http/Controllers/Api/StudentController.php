@@ -3,38 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DisciplineRequest;
-use App\Model\Disciplines;
+use App\Model\Students;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class DisciplineController extends Controller
+class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($code = null)
+    public function index()
     {
-        if ($code === null) {
+        $student = Students::all();
 
-            $disciplines = Disciplines::all();
-
-            return response()->json($disciplines);
-        }
-
-
-        $found = Disciplines::where('code', $code)->first();
-
-        if ($found === null) {
-            return response()->json([
-                "message" => "Discipline not found"
-            ], 404);
-        }
-
-        return response()->json($found);
-
+        return response()->json($student);
     }
 
     /**
@@ -45,10 +29,11 @@ class DisciplineController extends Controller
      */
     public function store(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
-            'code' => 'required|unique:disciplines|max:10',
-            'name' => 'required|unique:disciplines|max:100',
-            'description' => 'required'
+            'name' => 'required|max:100',
+            'email' => 'required|unique:students|max:100|email',
+            'birth_date' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -58,22 +43,32 @@ class DisciplineController extends Controller
         }
 
         try {
-            $newDiscipline = new Disciplines;
-            $newDiscipline->code = $request['code'];
-            $newDiscipline->name = $request['name'];
-            $newDiscipline->description = $request['description'];
-            $newDiscipline->save();
-        } catch (\Exception $e) {
+            $newStudent = new Students;
+            $newStudent->name = $request['name'];
+            $newStudent->email = $request['email'];
+            $newStudent->birth_date = $request['birth_date'];
+            $newStudent->save();
+        } catch (\Exception $exception) {
             return response()->json([
-                "message" => "Error - Discipline not created: " . $e->getMessage()
+                "message" => "Error - Student not created: " . $exception->getMessage()
             ], 400);
-
         }
 
         return response()->json([
-            "message" => "Success - Discipline record created"
+            "message" => "Success - Student created"
         ], 201);
 
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
     }
 
     /**
@@ -81,16 +76,14 @@ class DisciplineController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
-     *      * @return \Illuminate\Http\JsonResponse
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $code)
+    public function update(Request $request, $id)
     {
-
         $validator = Validator::make($request->all(), [
-            'code' => 'required|max:10',
             'name' => 'required|max:100',
-            'description' => 'required'
+            'email' => 'required|max:100|email',
+            'birth_date' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -99,32 +92,29 @@ class DisciplineController extends Controller
             ], 400);
         }
 
-        $found = Disciplines::where('code', $code)->first();
+        $found = Students::find($id);
 
         if ($found === null) {
             return response()->json([
-                "message" => "Error - Discipline not found"
+                "message" => "Error - Student not found"
             ], 404);
         }
 
         try {
-            $found->code = $request['code'];
             $found->name = $request['name'];
-            $found->description = $request['description'];
+            $found->email = $request['email'];
+            $found->birth_date = $request['birth_date'];
             $found->save();
         } catch (\Exception $e) {
             return response()->json([
-                "message" => "Error - Discipline d'ont updated: " . $e->getMessage()
+                "message" => "Error - Student d'ont updated: " . $e->getMessage()
             ], 400);
         }
 
         return response()->json([
-            "message" => "Success - Disciplines updated"
+            "message" => "Success - Student updated"
         ], 200);
-
-
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -132,19 +122,18 @@ class DisciplineController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($code)
+    public function destroy($id)
     {
-
-        $found = Disciplines::where('code', $code)->first();
+        $found = Students::find($id);
 
         if ($found === null) {
             return response()->json([
-                "message" => "Discipline not found"
+                "message" => "Student not found"
             ], 404);
         }
 
         try {
-            $destroy = Disciplines::destroy($found->id);
+            $found->destroy($found->id);
         } catch (\Exception $ex) {
             return response()->json([
                 "message" => "Error - " . $ex->getMessage()
@@ -152,8 +141,7 @@ class DisciplineController extends Controller
         }
 
         return response()->json([
-            "message" => "Success - Discipline deleted"
+            "message" => "Success - Student deleted"
         ], 200);
-
     }
 }

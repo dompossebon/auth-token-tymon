@@ -15,6 +15,12 @@ class CreateStudentsTable extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
+
+            $table->string('name', 100); // Nome do Aluno conforme Identidade
+            $table->string('email', 100)->unique(); // Email Utilizado pelo Aluno
+            $table->string('birth_date', 10); // Data de Nascimento
+
+
             $table->timestamps();
 
             $table->engine = 'InnoDB';

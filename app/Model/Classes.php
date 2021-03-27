@@ -6,13 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Classes extends Model
 {
-    protected $fillable = [
-        'name'
-    ];
-
-    protected $guarded = [
-        'discipline_id'
-    ];
+    protected $hidden = ["created_at", "updated_at"];
 
     public function discipline()
     {
