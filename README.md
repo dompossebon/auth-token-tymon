@@ -104,7 +104,10 @@ Para maiores detalhes consulte o arquivo supracitado
 ## Manual Básico
 
 Primeiro ponto é Obter o Token, sem ele nada vai funcionar:
-http://127.0.0.1:8000/api/auth/login (em body/form-data entre com seu usuário e senha)
+
+POST: http://127.0.0.1:8000/api/auth/login 
+
+(em body/form-data entre com seu usuário e senha)
 
 copie o token recebido, ele será utilizado em todos os acessos.
 Utilize o Token clicando em "Authorization" e em TYPE escolha "Bearer Token".
@@ -113,38 +116,45 @@ na Caixa TOKEN cole o seu token.
 ## Cadastros independes são: DISCIPLINA e ESTUDANTE
 
 # Disciplinas
-http://127.0.0.1:8000/api/new/discipline, e;
+POST: http://127.0.0.1:8000/api/new/discipline
+
 regras: name e code são ÚNICOS e nao podem ser NULOS
 
 "{
-"code": "BioF3",
-"name": "Biologia Fundamento3",
-"description": "mundo 3"
+"code": "BioF1",
+"name": "Biologia Fundamental - 1",
+"description": "A Biologia é uma ciência que estuda a vida em seus mais variados aspectos."
 }"
 
 # Estudante
-http://127.0.0.1:8000/api/new/student
+POST: http://127.0.0.1:8000/api/new/student
+
 regras: name e code são ÚNICOS
 
 {
-"name": "MARCOS da Silva Albino de Mello",
-"email": "meuemaaaail2@gmail.com",
+"name": "Alexandre Possebon",
+"email": "meuemail@gmail.com",
 "birth_date": "1981/02/09"
 }
 
 # Turma
-http://127.0.0.1:8000/api/new/classe, Neste cadastro deve utiliza o id da disciplina cadastrada
-regras: name é ÚNICO e nao podem ser NULO ...
+POST: http://127.0.0.1:8000/api/new/classe
+
+Neste cadastro deve utiliza o id da disciplina cadastrada
+regras: name é ÚNICO e nao podem ser NULO.
 
 {
 "discipline_id": 1,
-"name": "Turma 022"
+"name": "Turma Bf2021.1"
 }
 
 # Turmas Montadas
 e somente então, poderá "Matricular/Linkar" o Aluno com a Turma utilizando:
-http://127.0.0.1:8000/api/new/assembledclass, Neste caso o usuário deverá
-utilizar o id do Aluno e o id da Turma
+
+POST: http://127.0.0.1:8000/api/new/assembledclass
+
+Neste caso o usuário deverá utilizar o id do Aluno e o id da Turma
+
 regras: Não poderá repetir o mesmo aluno em uma mesma turma, ou seja,
 em cada turma, somente poderá haver um único "student_id"
 
@@ -157,7 +167,8 @@ em cada turma, somente poderá haver um único "student_id"
 A API também deverá conter um endpoint de relatório, endpoint que irá
 constar todos os alunos de uma determinada turma.
 o usuário deverá acessar o seguinte endpoint:
-http://127.0.0.1:8000/api/classreport1/(ID da Turma que deseja visualizar)
+
+http://127.0.0.1:8000/api/classreport/1 (ID da Turma que deseja visualizar)
 
 # Outros endpoints de interesse:
 -------------------
@@ -165,27 +176,36 @@ http://127.0.0.1:8000/api/classreport1/(ID da Turma que deseja visualizar)
 ----------
 # Professores
 http://127.0.0.1:8000/api/teachers
+
 ou
+
 http://127.0.0.1:8000/api/teachers/1 (ID do Professor)
 
 # Disciplinas
 http://127.0.0.1:8000/api/discipline
+
 ou
+
 http://127.0.0.1:8000/api/discipline/BioF1 (código da disciplina)
 
 # Estudante
 http://127.0.0.1:8000/api/student
+
 ou
+
 http://127.0.0.1:8000/api/student/1 (ID do Estudante)
 
 # Turma
 http://127.0.0.1:8000/api/classe
+
+ou
+
 http://127.0.0.1:8000/api/classe/1 (ID da Turma)
 
 # Turmas Montadas com alunos (todas as turmas e seus alunos)
 http://127.0.0.1:8000/api/assembledclass
 
-# UMA UNICA Turma Montada com seus respectivos alunos
+# UMA ÚNICA Turma Montada com seus respectivos alunos
 http://127.0.0.1:8000/api/classreport/1 (ID do Turma em Questão)
 
 ## EDITAR
@@ -193,29 +213,54 @@ http://127.0.0.1:8000/api/classreport/1 (ID do Turma em Questão)
 # Disciplinas
 http://127.0.0.1:8000/api/edit/discipline/BioF1 (código da disciplina)
 
+{
+"code": "BioF2",
+"name": "2-Biologia Fundamental",
+"description": "Informações Sobre o Mundo Animal e Vegetal. Para Amadores"
+}
+
 # Estudante
 http://127.0.0.1:8000/api/edit/student/1 (ID do Estudante)
+
+{
+"name": "Ricardo Lopes da Silva Albino de Mello",
+"email": "meuemail@gmail.com",
+"birth_date": "1981/02/09"
+}
 
 # Turma
 http://127.0.0.1:8000/api/edit/classe/1 (id da turma)
 
+{
+"discipline_id": 1,
+"name": "Turma 01 BIO"
+}
+
 # Turmas Montadas
 http://127.0.0.1:8000/api/edit/assembledclass/4 (ID desejado)
+
+{
+"student_id": 5,
+"class_id": 12
+}
 
 ##DELETAR
 ----------
 # Disciplinas
 http://127.0.0.1:8000/api/delete/discipline/BioF1 (código da disciplina)
+
 ATENÇÂO: disciplina(Disciplines) é utilizada para criar turma, logo, O sistema nao permitirá ser apagada,
 se estiver sendo usada na tabela Turma(classes) 
 
 # Estudante
 http://127.0.0.1:8000/api/delete/student/1 (ID do Estudante)
+
 ATENÇÂO: Estudante(Students) é utilizado para Montar/Linkar turmas montadas, logo, O sistema nao permitirá ser apagado,
 se estiver sendo usada na tabela Turmas Montadas(assembled_classes)
 
 # Turma
 http://127.0.0.1:8000/api/delete/classe/5 (id da turma)
+
 ATENÇÂO: Turma(classes) é utilizado para Montar/Linkar turmas montadas, logo, O sistema nao permitirá ser apagado,
 se estiver sendo usada na tabela Turmas Montadas(assembled_classes)
 

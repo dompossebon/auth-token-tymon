@@ -16,7 +16,7 @@ class CreateDisciplinesTable extends Migration
         Schema::create('disciplines', function (Blueprint $table) {
             $table->id();
 
-            $table->string('code', 10)->unique(); // Abreviação utilizada
+            $table->string('code', 20)->unique(); // Abreviação utilizada
             $table->string('name', 100)->unique(); // Auto Explicativo
             $table->text('description')->nullable(); // Descrição sobre a Disciplina
 

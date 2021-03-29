@@ -50,7 +50,7 @@ class DisciplineController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'code' => 'required|unique:disciplines|max:10',
+            'code' => 'required|unique:disciplines|max:20',
             'name' => 'required|unique:disciplines|max:100',
             'description' => 'required'
         ]);
