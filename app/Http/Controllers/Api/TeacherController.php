@@ -13,11 +13,30 @@ class TeacherController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index($id = null)
     {
-        $users = User::all();
+        if ($id === null) {
 
-        return response()->json($users);
+            $teachers = User::all();
+
+            if(count($teachers) === 0){
+                return response()->json([
+                    "message" => "Teachers not found - Teachers Empty"
+                ], 404);
+            }
+
+            return response()->json($teachers);
+        }
+
+        $found = User::where('id', $id)->first();
+
+        if ($found === null) {
+            return response()->json([
+                "message" => "Teacher not found"
+            ], 404);
+        }
+
+        return response()->json($found);
     }
 
     /**

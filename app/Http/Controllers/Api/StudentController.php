@@ -14,11 +14,30 @@ class StudentController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index($id = null)
     {
-        $student = Students::all();
+        if ($id === null) {
 
-        return response()->json($student);
+            $students = Students::all();
+
+            if(count($students) === 0){
+                return response()->json([
+                    "message" => "Students not found - Students Empty"
+                ], 404);
+            }
+
+            return response()->json($students);
+        }
+
+        $foundStudent = Students::where('id', $id)->first();
+
+        if ($foundStudent === null) {
+            return response()->json([
+                "message" => "Student not found"
+            ], 404);
+        }
+
+        return response()->json($foundStudent);
     }
 
     /**

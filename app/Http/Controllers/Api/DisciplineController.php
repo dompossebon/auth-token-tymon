@@ -21,9 +21,14 @@ class DisciplineController extends Controller
 
             $disciplines = Disciplines::all();
 
+            if(count($disciplines) === 0){
+                return response()->json([
+                    "message" => "Disciplines not found - Disciplines Empty"
+                ], 404);
+            }
+
             return response()->json($disciplines);
         }
-
 
         $found = Disciplines::where('code', $code)->first();
 
@@ -34,7 +39,6 @@ class DisciplineController extends Controller
         }
 
         return response()->json($found);
-
     }
 
     /**
@@ -73,7 +77,6 @@ class DisciplineController extends Controller
         return response()->json([
             "message" => "Success - Discipline record created"
         ], 201);
-
     }
 
     /**
@@ -86,7 +89,6 @@ class DisciplineController extends Controller
      */
     public function update(Request $request, $code)
     {
-
         $validator = Validator::make($request->all(), [
             'code' => 'required|max:10',
             'name' => 'required|max:100',
@@ -121,8 +123,6 @@ class DisciplineController extends Controller
         return response()->json([
             "message" => "Success - Disciplines updated"
         ], 200);
-
-
     }
 
 
@@ -134,7 +134,6 @@ class DisciplineController extends Controller
      */
     public function destroy($code)
     {
-
         $found = Disciplines::where('code', $code)->first();
 
         if ($found === null) {
@@ -154,6 +153,5 @@ class DisciplineController extends Controller
         return response()->json([
             "message" => "Success - Discipline deleted"
         ], 200);
-
     }
 }

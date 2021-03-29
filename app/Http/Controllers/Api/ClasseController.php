@@ -18,6 +18,15 @@ class ClasseController extends Controller
     public function index($id = null)
     {
         if ($id === null) {
+
+            $checkClass = Classes::all();
+
+            if(count($checkClass) === 0){
+                return response()->json([
+                    "message" => "Classes not found - Classes Empty"
+                ], 404);
+            }
+
             $classes = Classes::with('discipline')->get();
 
             foreach ($classes as $classe) {
@@ -33,7 +42,6 @@ class ClasseController extends Controller
             return response()->json($dataClasse);
         }
 
-
         $found = Classes::with('discipline')->where('id', $id)->first();
         if ($found === null) {
             return response()->json([
@@ -42,7 +50,6 @@ class ClasseController extends Controller
         }
 
         return response()->json($found);
-
     }
 
     /**

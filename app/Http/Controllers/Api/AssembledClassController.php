@@ -8,6 +8,7 @@ use App\Model\Classes;
 use App\Model\Disciplines;
 use App\Model\Students;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Stmt\TryCatch;
 
@@ -18,35 +19,31 @@ class AssembledClassController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($id = null)
+    public function index()
     {
-        if ($id === null) {
-            $assembledClasses = AssembledClass::with(['student', 'classe'])->get();
+        $checkAssembledClasses = AssembledClass::all();
 
-            foreach ($assembledClasses as $assembledClass) {
-                $discipline = Disciplines::find($assembledClass->classe->discipline_id);
-                $dataAssembledClass[] = [
-                    'Student_Id' => $assembledClass->student->id,
-                    'Class_Id' => $assembledClass->classe->id,
-                    'Class_Discipline_id' => $assembledClass->classe->discipline_id,
-                    'Student_Name' => $assembledClass->student->name,
-                    'Class_Discipline_Name' => $discipline->code . ' - ' . $discipline->name,
-                    'Class_Name' => $assembledClass->classe->name,
-                ];
-            }
-
-            return response()->json($dataAssembledClass);
-        }
-
-        $found = AssembledClass::with(['student', 'classe'])->where('id', $id)->first();
-
-        if ($found === null) {
+        if(count($checkAssembledClasses) === 0){
             return response()->json([
-                "message" => "AssembledClass not found"
+                "message" => "Assembled Class not found - Assembled Class Empty"
             ], 404);
         }
 
-        return response()->json($found);
+        $assembledClasses = AssembledClass::with(['student', 'classe'])->get();
+
+        foreach ($assembledClasses as $assembledClass) {
+            $discipline = Disciplines::find($assembledClass->classe->discipline_id);
+            $dataAssembledClass[] = [
+                'Student_Id' => $assembledClass->student->id,
+                'Class_Id' => $assembledClass->classe->id,
+                'Class_Discipline_id' => $assembledClass->classe->discipline_id,
+                'Student_Name' => $assembledClass->student->name,
+                'Class_Discipline_Name' => $discipline->code . ' - ' . $discipline->name,
+                'Class_Name' => $assembledClass->classe->name,
+            ];
+        }
+
+        return response()->json($dataAssembledClass);
     }
 
     /**
@@ -178,16 +175,16 @@ class AssembledClassController extends Controller
      */
     public function destroy($id)
     {
-        $found = AssembledClass::find($id);
+        $foundClass = AssembledClass::where('class_id', $id)->get();
 
-        if ($found === null) {
+        if ($foundClass === null) {
             return response()->json([
                 "message" => "Assembled Class not found"
             ], 404);
         }
 
         try {
-            $found->delete();
+            DB::table('assembled_classes')->where('class_id', $id)->delete();
         } catch (\Exception $ex) {
             return response()->json([
                 "message" => "Error - " . $ex->getMessage()

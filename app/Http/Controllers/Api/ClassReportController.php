@@ -13,9 +13,8 @@ class ClassReportController extends Controller
      * @param $classId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function classReport1($classId)
+    public function classReport($classId)
     {
-
         $assembledClasses = AssembledClass::with(['student', 'classe'])->where('class_id', $classId)->get();
 
         if (count($assembledClasses) === 0) {

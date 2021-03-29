@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('auth/login', 'Api\\AuthController@login');
 
-Route::group(['middleware' => ['apiJwt']], function (){
+//Route::group(['middleware' => ['apiJwt']], function (){
 
 
 
@@ -28,6 +28,7 @@ Route::group(['middleware' => ['apiJwt']], function (){
                 Route::post('auth/logout', 'Api\\AuthController@logout');
 
                 Route::get('teachers', 'Api\\TeacherController@index');
+                Route::get('teachers/{id?}', 'Api\\TeacherController@index');
 
                 Route::get('discipline/{code?}', 'Api\\DisciplineController@index');
                 Route::post('new/discipline', 'Api\\DisciplineController@store');
@@ -39,23 +40,23 @@ Route::group(['middleware' => ['apiJwt']], function (){
                 Route::put('edit/classe/{id}', 'Api\\ClasseController@update');
                 Route::delete('delete/classe/{id}', 'Api\\ClasseController@destroy');
 
-                Route::get('student/{code?}', 'Api\\StudentController@index');
+                Route::get('student/{id?}', 'Api\\StudentController@index');
                 Route::post('new/student', 'Api\\StudentController@store');
                 Route::put('edit/student/{id}', 'Api\\StudentController@update');
                 Route::delete('delete/student/{id}', 'Api\\StudentController@destroy');
 
-                Route::get('assembledclass/{id?}', 'Api\\AssembledClassController@index');
+                Route::get('assembledclass', 'Api\\AssembledClassController@index');
                 Route::post('new/assembledclass', 'Api\\AssembledClassController@store');
                 Route::put('edit/assembledclass/{id}', 'Api\\AssembledClassController@update');
                 Route::delete('delete/assembledclass/{id}', 'Api\\AssembledClassController@destroy');
 
-                Route::get('classreport1/{classId}', 'Api\\ClassReportController@classreport1');
+                Route::get('classreport/{classId}', 'Api\\ClassReportController@classreport');
 
 
 
 
 
-});
+//});
 
 
 
